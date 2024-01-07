@@ -1,0 +1,18 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: myapi-scaledobject
+spec:
+  scaleTargetRef:
+    name: myapi-deployment
+    kind: Deployment
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: aws-cloudwatch
+    metadata:
+      namespace: MyApiNamespace
+      expression: SELECT AVG(RequestPerSecond) FROM MyApiNamespace
+      targetMetricValue: '2'
+      awsRegion: "<MY_REGION>"
+      identityOwner: operator
